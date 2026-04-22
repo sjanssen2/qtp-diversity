@@ -29,7 +29,7 @@ from qtp_diversity.validate import (
 
 class ValidateTests(PluginTestCase):
     def setUp(self):
-        self.out_dir = mkdtemp()
+        self.out_dir = mkdtemp(prefix=self.base_data_dir)
         self._clean_up_files = [self.out_dir]
         self.metadata = {
             '1.SKM4.640180': {'col': "doesn't really matters"},
@@ -250,7 +250,8 @@ class ValidateTests(PluginTestCase):
         # Test distance matrix success
         sample_ids = ['1.SKM4.640180', '1.SKB8.640193', '1.SKD8.640184',
                       '1.SKM9.640192', '1.SKB7.640196']
-        dm_fp = self._create_distance_matrix(sample_ids)
+        dm_fp = self.qclient.push_file_to_central(
+            self._create_distance_matrix(sample_ids))
         job_id, params = self._create_job(
             'distance_matrix', {'plain_text': [dm_fp]}, 1)
         obs_success, obs_ainfo, obs_error = validate(
@@ -264,7 +265,8 @@ class ValidateTests(PluginTestCase):
         self.assertEqual(obs_error, "")
 
         # Test ordination results success
-        ord_res_fp = self._create_ordination_results(sample_ids)
+        ord_res_fp = self.qclient.push_file_to_central(
+            self._create_ordination_results(sample_ids))
         job_id, params = self._create_job(
             'ordination_results', {'plain_text': [ord_res_fp]}, 1)
         obs_success, obs_ainfo, obs_error = validate(
@@ -280,7 +282,8 @@ class ValidateTests(PluginTestCase):
         self.assertEqual(obs_error, "")
 
         # Test alpha vector success
-        alpha_vector_fp = self._create_alpha_vector(sample_ids)
+        alpha_vector_fp = self.qclient.push_file_to_central(
+            self._create_alpha_vector(sample_ids))
         job_id, params = self._create_job(
             'alpha_vector', {'plain_text': [alpha_vector_fp]}, 1)
         obs_success, obs_ainfo, obs_error = validate(
